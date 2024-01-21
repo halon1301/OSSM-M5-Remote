@@ -46,11 +46,12 @@ OneButton Button3(38, false);
 #define ENC_4_CLK 19
 #define ENC_4_DT 27
 OneButton Button1(35, false); //MX Button
-OneButton Button2(36, false); //Encoder Left
+OneButton Button2(23, false); //Encoder Left G36 is where it's connected, unused G23
 OneButton Button3(34, false, true); // Encoder Right
 #endif
 
-#define Encoder_MAP 144
+#define Encoder_MAP 1152 // 144
+#define EncoderS_MAP 144
 
 #define LV_HOR_RES_MAX 320
 #define LV_VER_RES_MAX 240

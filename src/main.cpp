@@ -130,7 +130,7 @@ long cum_s_enc = 0;
 long cum_a_enc = 0;
 long encoder4_enc = 0;
 
-extern float maxdepthinmm = 180.0;
+extern float maxdepthinmm = 62.0; // Original value 180
 extern float speedlimit = 600;
 int speedscale = 0;
 
@@ -488,7 +488,7 @@ void savepattern(lv_event_t * e){
 }
 
 void homebuttonmevent(lv_event_t * e){
-  LogDebug("HomeButton");
+  LogDebug("HomeButton-tap");
   if(OSSM_On == false){
     SendCommand(ON, 0.0, OSSM_ID);
   } else if(OSSM_On == true){
@@ -636,7 +636,9 @@ void loop()
               encoder1.setCount(Encoder_MAP);
             } 
             speedenc = encoder1.getCount();
+            LogDebug(speedenc);
             speed = fscale(0, Encoder_MAP, 0, speedlimit, speedenc, speedscale);
+            LogDebug(speed);
             SendCommand(SPEED, speed, OSSM_ID);
           }
         } else if(lv_slider_get_value(ui_homespeedslider) != speed){
@@ -656,15 +658,15 @@ void loop()
             lv_slider_set_value(ui_homedepthslider, depth, LV_ANIM_OFF);
             if(encoder2.getCount() <= 0){
               encoder2.setCount(0);
-            } else if (encoder2.getCount() >= Encoder_MAP){
-              encoder2.setCount(Encoder_MAP);
+            } else if (encoder2.getCount() >= EncoderS_MAP){
+              encoder2.setCount(EncoderS_MAP);
             } 
             depthenc = encoder2.getCount();
-            depth = fscale(0, Encoder_MAP, 0, maxdepthinmm, depthenc, 0);
+            depth = fscale(0, EncoderS_MAP, 0, maxdepthinmm, depthenc, 0);
             SendCommand(DEPTH, depth, OSSM_ID);
           }
         } else if(lv_slider_get_value(ui_homedepthslider) != depth){
-            depthenc =  fscale(0, maxdepthinmm, 0, Encoder_MAP, depth, 0);
+            depthenc =  fscale(0, maxdepthinmm, 0, EncoderS_MAP, depth, 0);
             encoder2.setCount(depthenc);
             depth = lv_slider_get_value(ui_homedepthslider);
             SendCommand(DEPTH, depth, OSSM_ID);
@@ -680,15 +682,15 @@ void loop()
             lv_slider_set_value(ui_homestrokeslider, stroke, LV_ANIM_OFF);
             if(encoder3.getCount() <= 0){
               encoder3.setCount(0);
-            } else if (encoder3.getCount() >= Encoder_MAP){
-              encoder3.setCount(Encoder_MAP);
+            } else if (encoder3.getCount() >= EncoderS_MAP){
+              encoder3.setCount(EncoderS_MAP);
             } 
             strokeenc = encoder3.getCount();
-            stroke = fscale(0, Encoder_MAP, 0, maxdepthinmm, strokeenc, 0);
+            stroke = fscale(0, EncoderS_MAP, 0, maxdepthinmm, strokeenc, 0);
             SendCommand(STROKE, stroke, OSSM_ID);
           }
         } else if(lv_slider_get_value(ui_homestrokeslider) != stroke){
-            strokeenc =  fscale(0, maxdepthinmm, 0, Encoder_MAP, stroke, 0);
+            strokeenc =  fscale(0, maxdepthinmm, 0, EncoderS_MAP, stroke, 0);
             encoder3.setCount(strokeenc);
             stroke = lv_slider_get_value(ui_homestrokeslider);
             SendCommand(STROKE, stroke, OSSM_ID);
@@ -719,7 +721,8 @@ void loop()
 
         if(click2_short_waspressed == true){
          lv_event_send(ui_HomeButtonL, LV_EVENT_CLICKED, NULL);
-        } else if(mxclick_short_waspressed == true){
+        } else if(mxclick_short_waspressed == true){ // Change short to long, short causes an issue with buttonL
+         LogDebug("SendingHomeM-LongPress");
          lv_event_send(ui_HomeButtonM, LV_EVENT_CLICKED, NULL);
         } else if(click3_short_waspressed == true){
          lv_event_send(ui_HomeButtonR, LV_EVENT_CLICKED, NULL);
@@ -962,20 +965,30 @@ void vibrate(){
 
 void mxclick() {
   vibrate();
+  LogDebug("mxclick-pressed");
   mxclick_short_waspressed = true;
 } 
 
 void mxlong(){
   vibrate();
+  vibrate();
+  LogDebug("mxlong-pressed");
   mxclick_long_waspressed = true;
 } 
 
 void click2() {
   vibrate();
+  vibrate();
+  vibrate();
+  LogDebug("click2-pressed");
   click2_short_waspressed = true;
 } // click1
 
 void click3() {
   vibrate();
+  vibrate();
+  vibrate();
+  vibrate();
+  LogDebug("click3-pressed");
   click3_short_waspressed = true;
 } // click1
